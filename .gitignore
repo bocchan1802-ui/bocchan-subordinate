@@ -1,0 +1,21 @@
+# Environment
+.env
+.env.local
+
+# Python
+__pypy__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

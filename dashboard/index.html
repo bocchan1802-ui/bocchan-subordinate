@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ぼっちゃんの部下管理UI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- ヘッダー -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="title">🤖 ぼっちゃんの部下管理システム</h1>
+        <span class="subtitle">Bocchan's Subordinate Management System</span>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText">待機中</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- メインエリア -->
+    <main class="main">
+      <!-- 部下カード -->
+      <section class="subordinate-section">
+        <h2 class="section-title">👥 部下一覧</h2>
+        <div class="subordinate-cards" id="subordinateCards">
+          <!-- パロスケカード -->
+          <div class="subordinate-card active" data-agent="korosuke">
+            <div class="card-header">
+              <div class="avatar">
+                <span class="avatar-emoji">🎤</span>
+              </div>
+              <div class="agent-info">
+                <h3 class="agent-name">パロスケ (korosuke)</h3>
+                <p class="agent-role">音声合成担当</p>
+              </div>
+              <div class="agent-status">
+                <span class="status-badge online">オンライン</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <span class="stat-label">処理中タスク</span>
+                  <span class="stat-value" id="korosukeTasks">0</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">完了タスク</span>
+                  <span class="stat-value" id="korosukeCompleted">0</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">音声合成数</span>
+                  <span class="stat-value" id="korosukeTtsCount">0</span>
+                </div>
+              </div>
+              <div class="agent-voice">
+                <span class="voice-label">音声:</span>
+                <span class="voice-name">Aivis Speech Korosuke</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- co-vibeカード -->
+          <div class="subordinate-card" data-agent="covibe">
+            <div class="card-header">
+              <div class="avatar">
+                <span class="avatar-emoji">⚡</span>
+              </div>
+              <div class="agent-info">
+                <h3 class="agent-name">co-vibe</h3>
+                <p class="agent-role">マルチプロバイダAIエージェント</p>
+              </div>
+              <div class="agent-status">
+                <span class="status-badge standby">待機中</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="stat-grid">
+                <div class="stat-item">
+                  <span class="stat-label">使用プロバイダ</span>
+                  <span class="stat-value" id="providerCount">4</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">現在の戦略</span>
+                  <span class="stat-value" id="currentStrategy">auto</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">セッション数</span>
+                  <span class="stat-value" id="sessionCount">0</span>
+                </div>
+              </div>
+              <div class="provider-list">
+                <span class="provider-item">🟦 Anthropic</span>
+                <span class="provider-item">🟩 OpenAI</span>
+                <span class="provider-item">🟪 Groq</span>
+                <span class="provider-item">🟫 Ollama</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- タスクログ -->
+      <section class="task-section">
+        <h2 class="section-title">📋 タスクログ</h2>
+        <div class="task-log" id="taskLog">
+          <div class="log-item info">
+            <span class="log-time">--:--:--</span>
+            <span class="log-message">システム初期化完了。部下が待機中です。</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- コマンド入力 -->
+      <section class="command-section">
+        <h2 class="section-title">💬 マスターからの命令</h2>
+        <div class="command-input-area">
+          <input
+            type="text"
+            id="commandInput"
+            class="command-input"
+            placeholder="マスター、何かご用ですか？"
+            autocomplete="off"
+          >
+          <button id="sendCommand" class="send-btn">
+            <span class="btn-icon">📤</span>
+            <span class="btn-text">送信</span>
+          </button>
+        </div>
+        <div class="quick-commands">
+          <span class="quick-label">クイックコマンド:</span>
+          <button class="quick-btn" data-cmd="/status">ステータス</button>
+          <button class="quick-btn" data-cmd="/tasks">タスク一覧</button>
+          <button class="quick-btn" data-cmd="/clear">ログ消去</button>
+          <button class="quick-btn" data-cmd="/voice test">音声テスト</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- サイドバー -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">🔧 システム状態</h3>
+        <div class="system-stats">
+          <div class="system-stat">
+            <span class="stat-label">CPU使用率</span>
+            <div class="progress-bar">
+              <div class="progress-fill" id="cpuUsage" style="width: 0%"></div>
+            </div>
+            <span class="stat-value-small" id="cpuValue">0%</span>
+          </div>
+          <div class="system-stat">
+            <span class="stat-label">メモリ使用率</span>
+            <div class="progress-bar">
+              <div class="progress-fill" id="memUsage" style="width: 0%"></div>
+            </div>
+            <span class="stat-value-small" id="memValue">0%</span>
+          </div>
+          <div class="system-stat">
+            <span class="stat-label">Aivis Speech</span>
+            <span class="connection-status" id="aivisStatus">
+              <span class="status-dot small"></span>
+              <span class="status-text">接続中</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">📊 統計</h3>
+        <div class="stats-list">
+          <div class="stats-item">
+            <span class="stats-label">総タスク数</span>
+            <span class="stats-value" id="totalTasks">0</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">成功率</span>
+            <span class="stats-value" id="successRate">100%</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">平均応答時間</span>
+            <span class="stats-value" id="avgResponse">0ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">⚙️ 設定</h3>
+        <div class="settings-list">
+          <label class="setting-item">
+            <input type="checkbox" id="autoVoice" checked>
+            <span>音声応答を有効化</span>
+          </label>
+          <label class="setting-item">
+            <input type="checkbox" id="debugMode">
+            <span>デバッグモード</span>
+          </label>
+          <label class="setting-item">
+            <select id="voiceSpeed" class="setting-select">
+              <option value="0.8">遅い</option>
+              <option value="1.0" selected>標準</option>
+              <option value="1.3">速い</option>
+            </select>
+            <span>音声速度</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
